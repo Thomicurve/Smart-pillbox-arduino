@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-int BUZZER = 6;
+int BUZZER = 7;
 int btTX = 2; int btRX = 3;
 char deviceResponse = 0;
 
@@ -42,18 +42,18 @@ int playSound(char isPlay){
 
 void setup() {
   Serial.begin(9600);
+  miBT.begin(9600);
   Serial.println("Listo");
   pinMode(BUZZER, OUTPUT);
-  miBT.begin(9600);
-
+ 
 }
 
 
 void loop() {
+  miBT.print("Ready :)\n");
   playSound(deviceResponse);
   if(miBT.available()){
     deviceResponse = miBT.read();
   }
-
 
 }
