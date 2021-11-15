@@ -1,7 +1,8 @@
 #include <SoftwareSerial.h>
-int BUZZER = 7;
-int btTX = 2; int btRX = 3;
-char deviceResponse = 0;
+int BUZZER = 4; // Pin buzzer
+int btTX = 2; int btRX = 3; // TX/RX (Usar cruzado)
+int deviceResponse = 0;
+bool btconnected;
 
 const int c = 261;
 const int d = 294;
@@ -24,10 +25,13 @@ const int gSH = 830;
 const int aH = 880;
 int counter = 0;
 
-SoftwareSerial miBT(btTX, btRX);
+// -------------------------------
 
-int playSound(char isPlay){
-  if(isPlay == '1'){
+SoftwareSerial BTserial(btTX, btRX);
+
+int playSound(int isPlay){
+  if(isPlay == 1){
+    Serial.println("ENCENDIDO");
     tone(BUZZER,660,550);
     delay(500);
     tone(BUZZER, 550, 500);
@@ -35,25 +39,31 @@ int playSound(char isPlay){
     tone(BUZZER, 550, 500);
     delay(1000);
   }else {
+    Serial.println("APAGADO");
     noTone(BUZZER);
   }
   delay(1000);
 }
 
 void setup() {
-  Serial.begin(9600);
-  miBT.begin(9600);
+  BTserial.begin(9600); // Bluetooth baud
+  Serial.begin(9600); // Serial baud
   Serial.println("Listo");
   pinMode(BUZZER, OUTPUT);
- 
 }
 
-
 void loop() {
-  miBT.print("Ready :)\n");
+   //if(BTserial.available()){
+   // Serial.println(BTserial.read());
+   //}
+   
   playSound(deviceResponse);
-  if(miBT.available()){
-    deviceResponse = miBT.read();
+  if(BTserial.read() == -1){
+    deviceResponse = 1;
   }
-
+  if(BTserial.read() == 48){
+    deviceResponse = 0;
+  }
+  Serial.println(BTserial.read());
+    
 }
